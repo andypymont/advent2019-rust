@@ -1,13 +1,9 @@
-use advent_of_code::template::commands::{
-    all::all_handler, download::download_handler, read::read_handler, scaffold::scaffold_handler,
-    solve::solve_handler,
-};
-use args::{parse_args, AppArgs};
+use advent_of_code::template::commands;
 
 mod args {
     use std::process;
 
-    pub enum AppArgs {
+    pub enum Arguments {
         Download {
             day: u8,
         },
@@ -29,31 +25,31 @@ mod args {
         },
     }
 
-    pub fn parse_args() -> Result<AppArgs, Box<dyn std::error::Error>> {
+    pub fn parse() -> Result<Arguments, Box<dyn std::error::Error>> {
         let mut args = pico_args::Arguments::from_env();
 
         let app_args = match args.subcommand()?.as_deref() {
-            Some("all") => AppArgs::All {
+            Some("all") => Arguments::All {
                 release: args.contains("--release"),
                 time: args.contains("--time"),
             },
-            Some("download") => AppArgs::Download {
+            Some("download") => Arguments::Download {
                 day: args.free_from_str()?,
             },
-            Some("read") => AppArgs::Read {
+            Some("read") => Arguments::Read {
                 day: args.free_from_str()?,
             },
-            Some("scaffold") => AppArgs::Scaffold {
+            Some("scaffold") => Arguments::Scaffold {
                 day: args.free_from_str()?,
             },
-            Some("solve") => AppArgs::Solve {
+            Some("solve") => Arguments::Solve {
                 day: args.free_from_str()?,
                 release: args.contains("--release"),
                 submit: args.opt_value_from_str("--submit")?,
                 time: args.contains("--time"),
             },
             Some(x) => {
-                eprintln!("Unknown command: {}", x);
+                eprintln!("Unknown command: {x}");
                 process::exit(1);
             }
             None => {
@@ -64,7 +60,7 @@ mod args {
 
         let remaining = args.finish();
         if !remaining.is_empty() {
-            eprintln!("Warning: unknown argument(s): {:?}.", remaining);
+            eprintln!("Warning: unknown argument(s): {remaining:?}.");
         }
 
         Ok(app_args)
@@ -72,22 +68,22 @@ mod args {
 }
 
 fn main() {
-    match parse_args() {
+    match args::parse() {
         Err(err) => {
-            eprintln!("Error: {}", err);
+            eprintln!("Error: {err}");
             std::process::exit(1);
         }
         Ok(args) => match args {
-            AppArgs::All { release, time } => all_handler(release, time),
-            AppArgs::Download { day } => download_handler(day),
-            AppArgs::Read { day } => read_handler(day),
-            AppArgs::Scaffold { day } => scaffold_handler(day),
-            AppArgs::Solve {
+            args::Arguments::All { release, time } => commands::all::handler(release, time),
+            args::Arguments::Download { day } => commands::download::handler(day),
+            args::Arguments::Read { day } => commands::read::handler(day),
+            args::Arguments::Scaffold { day } => commands::scaffold::handler(day),
+            args::Arguments::Solve {
                 day,
                 release,
                 time,
                 submit,
-            } => solve_handler(day, release, time, submit),
+            } => commands::solve::handler(day, release, time, submit),
         },
     };
 }

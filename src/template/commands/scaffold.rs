@@ -4,10 +4,12 @@ use std::{
     process,
 };
 
-const MODULE_TEMPLATE: &str = r#"pub fn part_one(input: &str) -> Option<u32> {
+const MODULE_TEMPLATE: &str = r#"#[must_use]
+pub fn part_one(input: &str) -> Option<u32> {
     None
 }
 
+#[must_use]
 pub fn part_two(input: &str) -> Option<u32> {
     None
 }
@@ -40,17 +42,17 @@ fn create_file(path: &str) -> Result<File, std::io::Error> {
     OpenOptions::new().write(true).create(true).open(path)
 }
 
-pub fn scaffold_handler(day: u8) {
-    let day_padded = format!("{:02}", day);
+pub fn handler(day: u8) {
+    let day_padded = format!("{day:02}");
 
-    let input_path = format!("data/inputs/{}.txt", day_padded);
-    let example_path = format!("data/examples/{}.txt", day_padded);
-    let module_path = format!("src/bin/{}.rs", day_padded);
+    let input_path = format!("data/inputs/{day_padded}.txt");
+    let example_path = format!("data/examples/{day_padded}.txt");
+    let module_path = format!("src/bin/{day_padded}.rs");
 
     let mut file = match safe_create_file(&module_path) {
         Ok(file) => file,
         Err(e) => {
-            eprintln!("Failed to create module file: {}", e);
+            eprintln!("Failed to create module file: {e}");
             process::exit(1);
         }
     };
@@ -60,7 +62,7 @@ pub fn scaffold_handler(day: u8) {
             println!("Created module file \"{}\"", &module_path);
         }
         Err(e) => {
-            eprintln!("Failed to write module contents: {}", e);
+            eprintln!("Failed to write module contents: {e}");
             process::exit(1);
         }
     }
@@ -70,7 +72,7 @@ pub fn scaffold_handler(day: u8) {
             println!("Created empty input file \"{}\"", &input_path);
         }
         Err(e) => {
-            eprintln!("Failed to create input file: {}", e);
+            eprintln!("Failed to create input file: {e}");
             process::exit(1);
         }
     }
@@ -80,7 +82,7 @@ pub fn scaffold_handler(day: u8) {
             println!("Created empty example file \"{}\"", &example_path);
         }
         Err(e) => {
-            eprintln!("Failed to create example file: {}", e);
+            eprintln!("Failed to create example file: {e}");
             process::exit(1);
         }
     }

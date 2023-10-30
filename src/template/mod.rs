@@ -10,12 +10,14 @@ pub const ANSI_BOLD: &str = "\x1b[1m";
 pub const ANSI_RESET: &str = "\x1b[0m";
 
 /// Helper function that reads a text file to a string.
+///
+/// # Panics
+///
+/// Will panic if the user has insufficient permissions to access the current directory.
+#[must_use]
 pub fn read_file(folder: &str, day: u8) -> String {
     let cwd = env::current_dir().unwrap();
-    let filepath = cwd
-        .join("data")
-        .join(folder)
-        .join(format!("{:02}.txt", day));
+    let filepath = cwd.join("data").join(folder).join(format!("{day:02}.txt"));
     let f = fs::read_to_string(filepath);
     f.expect("could not open input file")
 }

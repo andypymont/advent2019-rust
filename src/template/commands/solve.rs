@@ -1,7 +1,7 @@
 use std::process::{Command, Stdio};
 
-pub fn solve_handler(day: u8, release: bool, time: bool, submit_part: Option<u8>) {
-    let day_padded = format!("{:02}", day);
+pub fn handler(day: u8, release: bool, time: bool, submit_part: Option<u8>) {
+    let day_padded = format!("{day:02}");
 
     let mut cmd_args = vec!["run".to_string(), "--bin".to_string(), day_padded];
 
@@ -13,7 +13,7 @@ pub fn solve_handler(day: u8, release: bool, time: bool, submit_part: Option<u8>
 
     if let Some(submit_part) = submit_part {
         cmd_args.push("--submit".to_string());
-        cmd_args.push(submit_part.to_string())
+        cmd_args.push(submit_part.to_string());
     }
 
     if time {
@@ -25,7 +25,7 @@ pub fn solve_handler(day: u8, release: bool, time: bool, submit_part: Option<u8>
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .spawn()
-        .unwrap();
+        .expect("cargo command failed to start");
 
-    cmd.wait().unwrap();
+    cmd.wait().expect("failed to wait on cargo command");
 }

@@ -13,7 +13,7 @@ pub fn run_part<I: Copy, T: Display>(func: impl Fn(I) -> Option<T>, input: I, da
     let part_str = format!("Part {part}");
 
     let (result, duration, samples) = run_timed(func, input, |result| {
-        print_result(result.as_ref(), &part_str, "")
+        print_result(result.as_ref(), &part_str, "");
     });
 
     print_result(
